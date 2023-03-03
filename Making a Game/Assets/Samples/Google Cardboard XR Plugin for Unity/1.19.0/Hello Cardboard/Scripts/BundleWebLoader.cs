@@ -4,6 +4,7 @@ using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Diagnostics;
 
 public class BundleWebLoader : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class BundleWebLoader : MonoBehaviour
     public UDPMessenger rfidMessenger;
     //public List<GameObject> loadedAsset;
     public List<String> readTags = new List<string>();
+    public string lastEpc;
+    public string lastTag;
     public UnityWebRequest webBundle;
     public AssetBundle remoteAssetBundle;
     //public Regex rx = new Regex(@"EPC:(\S+)"); //Regular expression to match RFID tag's EPC in each RFID data.
@@ -24,10 +27,12 @@ public class BundleWebLoader : MonoBehaviour
         rfidMessenger = GameObject.Find("UDPMessenger").GetComponent<UDPMessenger>();
         if (rfidMessenger == null)
         {
-            Debug.LogError("Failed to find RFID Messenger!");
+            UnityEngine.Debug.LogError("Failed to find RFID Messenger!");
         }
 
         bundleUrl = ""; //The actual asset bundle url will be contained from RFID data.
+        lastTag = "";
+        lastEpc = "";
         //loaderCalled = false;
     }
 
@@ -37,9 +42,9 @@ public class BundleWebLoader : MonoBehaviour
         //foreach (Match tag in tagEPC)
         //{
         //Debug.Log(tag);
-        if (readTags.Contains(rfidMessenger.rfidTag.EpcName) == false && rfidMessenger.rfidTag.AssetName != "")
+        //UnityEngine.Debug.Log(rfidMessenger.rfidTag.EpcName);
+        if (rfidMessenger.rfidTag.EpcName != lastEpc && rfidMessenger.rfidTag.AssetName != "")
         {
-
             if (bundleUrl == "" && rfidMessenger.rfidTag.BundleUrl != null)
             {
                 bundleUrl = rfidMessenger.rfidTag.BundleUrl;
@@ -47,11 +52,18 @@ public class BundleWebLoader : MonoBehaviour
             }
             if (bundleUrl != "")
             {
+               string NowName = rfidMessenger.rfidTag.AssetName;
+                UnityEngine.Debug.Log("Hello: " + NowName);
+                if (NowName != lastTag)
+                {
+                    UnityEngine.Debug.Log("Break ");
+                    Break(lastTag);
+                }
                 StartCoroutine(Load(rfidMessenger.rfidTag.AssetName));
-                readTags.Add(rfidMessenger.rfidTag.EpcName);
+                lastTag = NowName;
+                lastEpc = rfidMessenger.rfidTag.EpcName;
             }
         }
-
         //}
 
     }
@@ -68,7 +80,7 @@ public class BundleWebLoader : MonoBehaviour
 
         if (remoteAssetBundle == null)
         {
-            Debug.LogError("Failed to download AssetBundle!");
+            UnityEngine.Debug.LogError("Failed to download AssetBundle!");
             yield break;
         }
 
@@ -77,6 +89,13 @@ public class BundleWebLoader : MonoBehaviour
 
         //remoteAssetBundle.Unload(false);
 
+    }
+
+    public void Break(string breakobject)
+    {
+        string objName = breakobject + "(Clone)";
+        GameObject obj = GameObject.Find(objName);
+        Destroy(obj, .5f);
     }
 
 }
