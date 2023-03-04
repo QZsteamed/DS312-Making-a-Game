@@ -15,16 +15,21 @@ public class BundleWebLoader : MonoBehaviour
     public List<String> readTags = new List<string>();
     public string lastEpc;
     public string lastTag;
+    public string Direction;
+    public Boolean Moving;
     public UnityWebRequest webBundle;
     public AssetBundle remoteAssetBundle;
     //public Regex rx = new Regex(@"EPC:(\S+)"); //Regular expression to match RFID tag's EPC in each RFID data.
     //public MatchCollection tagEPC;
 
+    public GameObject background;
+    
     // Start is called before the first frame update
     void Start()
     {
         //StartCoroutine(Load());
         rfidMessenger = GameObject.Find("UDPMessenger").GetComponent<UDPMessenger>();
+        background = GameObject.Find("Background");
         if (rfidMessenger == null)
         {
             UnityEngine.Debug.LogError("Failed to find RFID Messenger!");
@@ -33,8 +38,10 @@ public class BundleWebLoader : MonoBehaviour
         bundleUrl = ""; //The actual asset bundle url will be contained from RFID data.
         lastTag = "";
         lastEpc = "";
-        //loaderCalled = false;
-    }
+        Moving = false;
+       Direction = "";
+    //loaderCalled = false;
+}
 
     void Update()
     {
@@ -42,30 +49,50 @@ public class BundleWebLoader : MonoBehaviour
         //foreach (Match tag in tagEPC)
         //{
         //Debug.Log(tag);
-        //UnityEngine.Debug.Log(rfidMessenger.rfidTag.EpcName);
-        if (rfidMessenger.rfidTag.EpcName != lastEpc && rfidMessenger.rfidTag.AssetName != "")
+        if (!Moving)
         {
-            if (bundleUrl == "" && rfidMessenger.rfidTag.BundleUrl != null)
+            if (rfidMessenger.rfidTag.EpcName != lastEpc && rfidMessenger.rfidTag.AssetName != "")
             {
-                bundleUrl = rfidMessenger.rfidTag.BundleUrl;
-                //Debug.Log("BundleURL set to " + bundleUrl);
-            }
-            if (bundleUrl != "")
-            {
-               string NowName = rfidMessenger.rfidTag.AssetName;
-                UnityEngine.Debug.Log("Hello: " + NowName);
-                if (NowName != lastTag)
+                if (bundleUrl == "" && rfidMessenger.rfidTag.BundleUrl != null)
                 {
-                    UnityEngine.Debug.Log("Break ");
-                    Break(lastTag);
+                    bundleUrl = rfidMessenger.rfidTag.BundleUrl;
+                    //Debug.Log("BundleURL set to " + bundleUrl);
                 }
-                StartCoroutine(Load(rfidMessenger.rfidTag.AssetName));
-                lastTag = NowName;
-                lastEpc = rfidMessenger.rfidTag.EpcName;
-            }
-        }
-        //}
+                if (bundleUrl != "")
+                {
+                    UnityEngine.Debug.Log(rfidMessenger.rfidTag.EpcName);
+                    string NowName = rfidMessenger.rfidTag.AssetName;
+                    UnityEngine.Debug.Log("Hello: " + NowName);
+                    if (NowName != lastTag)
+                    {
+                        UnityEngine.Debug.Log("Break ");
+                        Break(lastTag);
+                    }
+                    StartCoroutine(Load(rfidMessenger.rfidTag.AssetName));
+                    if (rfidMessenger.rfidTag.EpcName == "0009")
+                    {
+                        Direction = lastEpc;
+                        UnityEngine.Debug.Log("Direction: " + Direction);
+                        Moving = true;
+                    }
+                    lastTag = NowName;
+                    lastEpc = rfidMessenger.rfidTag.EpcName;
+                }
 
+                //可以这么写吗
+                /*
+                if(rfidMessenger.rfidTag.EpcName == "0000")
+                {
+                    UnityEngine.Debug.Log("move!");//果然不行，写到外面去也不行
+                    Movement();
+
+                }
+                */
+            }
+            //}
+
+        }   
+        //试下这里Epc归零？
     }
 
     public IEnumerator Load(string assetName)
@@ -95,7 +122,8 @@ public class BundleWebLoader : MonoBehaviour
     {
         string objName = breakobject + "(Clone)";
         GameObject obj = GameObject.Find(objName);
-        Destroy(obj, .5f);
+        //Destroy(obj, .5f);
+        Destroy(obj);
     }
 
 }

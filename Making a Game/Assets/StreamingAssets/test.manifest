@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 353936848
+CRC: 3147308587
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c97b2600feac78e94d9b10130f8f24a2
+    Hash: 3b79616ec01f3f175901b841b34f20af
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 6a4622e153b0dfd3da281309dcee99e7
+    Hash: bb126996d9fe518b904b3e2b4ea27c44
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -18,6 +18,8 @@ ClassTypes:
 - Class: 28
   Script: {instanceID: 0}
 - Class: 48
+  Script: {instanceID: 0}
+- Class: 50
   Script: {instanceID: 0}
 - Class: 74
   Script: {instanceID: 0}
@@ -34,6 +36,7 @@ Assets:
 - Assets/BundleAssest/character.prefab
 - Assets/BundleAssest/Cube1.prefab
 - Assets/Animation/Move.anim
+- Assets/BundleAssest/Confirm.prefab
 - Assets/BundleAssest/Circle.prefab
 - Assets/BundleAssest/Cube3.prefab
 - Assets/BundleAssest/Cube2.prefab
