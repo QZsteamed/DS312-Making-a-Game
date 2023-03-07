@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 //using Google.Maps.Coord;
 //using Google.Maps.Event;
 //using Google.Maps.Examples.Shared;
@@ -56,7 +57,7 @@ public class UDPMessenger : MonoBehaviour
         //Specify remote host machine, allowing all data sent by any IP port
         IPEndPoint remoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);//IPEndPoint remoteIpEndPoint = null;
 
-        Debug.Log("Waiting for a client...");
+        UnityEngine.Debug.Log("Waiting for a client...");
 
         while (true)
         {
@@ -71,9 +72,9 @@ public class UDPMessenger : MonoBehaviour
 
     private void OnRecieve(string rfidData)
     {
-        Debug.Log("JSON Raw Data:" + rfidData);
+        UnityEngine.Debug.Log("JSON Raw Data:" + rfidData);
         rfidTag = rfidTag.ParsedFromJSON(rfidData);
-        Debug.Log("Parsed Tag EPC:" + rfidTag.EpcName + " Lat: " + rfidTag.Latitude + " Lng:" + rfidTag.Longitude + " URL:" + rfidTag.BundleUrl + " Name:" + rfidTag.AssetName);
+        UnityEngine.Debug.Log("Parsed Tag EPC:" + rfidTag.EpcName + " Lat: " + rfidTag.Latitude + " Lng:" + rfidTag.Longitude + " URL:" + rfidTag.BundleUrl + " Name:" + rfidTag.AssetName);
         //if (rfidData.Contains("EPC:0011")) player.playerRelativeOffset = new LatLng(-19.594984, -11.325444);
         //else if (rfidData.Contains("EPC:0012")) player.playerRelativeOffset = new LatLng(0, 0);
 

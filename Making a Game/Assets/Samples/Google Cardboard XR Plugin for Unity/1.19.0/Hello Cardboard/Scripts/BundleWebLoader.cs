@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Diagnostics;
+using System.Collections.Specialized;
 
 public class BundleWebLoader : MonoBehaviour
 {
@@ -13,23 +14,26 @@ public class BundleWebLoader : MonoBehaviour
     public UDPMessenger rfidMessenger;
     //public List<GameObject> loadedAsset;
     public List<String> readTags = new List<string>();
+
     public string lastEpc;
     public string lastTag;
     public string Direction;
     public Boolean Moving;
+    public int MapNumber;
+    public string nowEpc;
+
     public UnityWebRequest webBundle;
     public AssetBundle remoteAssetBundle;
     //public Regex rx = new Regex(@"EPC:(\S+)"); //Regular expression to match RFID tag's EPC in each RFID data.
     //public MatchCollection tagEPC;
 
-    public GameObject background;
-    
+
     // Start is called before the first frame update
     void Start()
     {
         //StartCoroutine(Load());
         rfidMessenger = GameObject.Find("UDPMessenger").GetComponent<UDPMessenger>();
-        background = GameObject.Find("Background");
+        
         if (rfidMessenger == null)
         {
             UnityEngine.Debug.LogError("Failed to find RFID Messenger!");
@@ -39,7 +43,10 @@ public class BundleWebLoader : MonoBehaviour
         lastTag = "";
         lastEpc = "";
         Moving = false;
-       Direction = "";
+        Direction = "";
+        MapNumber = GameObject.Find("Character").GetComponent<Character>().MapNumber; 
+        nowEpc = "";
+
     //loaderCalled = false;
 }
 
@@ -51,12 +58,18 @@ public class BundleWebLoader : MonoBehaviour
         //Debug.Log(tag);
         if (!Moving)
         {
+            
             if (rfidMessenger.rfidTag.EpcName != lastEpc && rfidMessenger.rfidTag.AssetName != "")
             {
+                //UnityEngine.Debug.Log("LastEpc" + lastEpc);
+                //UnityEngine.Debug.Log("EpcName"+ rfidMessenger.rfidTag.EpcName);
+                //UnityEngine.Debug.Log("Change Epc");
+                //UnityEngine.Debug.Log("BundleURL"+rfidMessenger.rfidTag.BundleUrl);
+
                 if (bundleUrl == "" && rfidMessenger.rfidTag.BundleUrl != null)
                 {
                     bundleUrl = rfidMessenger.rfidTag.BundleUrl;
-                    //Debug.Log("BundleURL set to " + bundleUrl);
+                    UnityEngine.Debug.Log("BundleURL set to " + bundleUrl);
                 }
                 if (bundleUrl != "")
                 {
@@ -66,9 +79,19 @@ public class BundleWebLoader : MonoBehaviour
                     if (NowName != lastTag)
                     {
                         UnityEngine.Debug.Log("Break ");
-                        Break(lastTag);
+                        if(lastEpc!= "")
+                        {
+                            MapNumber = GameObject.Find("Character").GetComponent<Character>().MapNumber;
+                            Break(MapNumber, lastEpc,lastTag);
+                        }
                     }
                     StartCoroutine(Load(rfidMessenger.rfidTag.AssetName));
+
+                    nowEpc = rfidMessenger.rfidTag.EpcName;
+
+                    GameObject.Find("LoadPrefabs").GetComponent<CreatePrefabs>().creating = true;
+
+
                     if (rfidMessenger.rfidTag.EpcName == "0009")
                     {
                         Direction = lastEpc;
@@ -79,20 +102,11 @@ public class BundleWebLoader : MonoBehaviour
                     lastEpc = rfidMessenger.rfidTag.EpcName;
                 }
 
-                //可以这么写吗
-                /*
-                if(rfidMessenger.rfidTag.EpcName == "0000")
-                {
-                    UnityEngine.Debug.Log("move!");//果然不行，写到外面去也不行
-                    Movement();
-
-                }
-                */
             }
+           
             //}
 
         }   
-        //试下这里Epc归零？
     }
 
     public IEnumerator Load(string assetName)
@@ -112,18 +126,33 @@ public class BundleWebLoader : MonoBehaviour
         }
 
         GameObject loadedAsset = remoteAssetBundle.LoadAsset<GameObject>(assetName);
+
+        //player = GameObject.Find("Character");
+        //playerPosition = new Vector3(player.transform.position.x, player.transform.position.y, 0); //获取角色（摄像机）当前位置
+        //更改物体位置
+       // loadedAsset.transform.position = new Vector3(playerPosition.x + loadedAsset.transform.position.x, playerPosition.y+ loadedAsset.transform.position.y, 0);
+        
         Instantiate(loadedAsset);
 
+        //根据角色位置调整生成物体的位置
         //remoteAssetBundle.Unload(false);
 
     }
 
-    public void Break(string breakobject)
+    public void Break(int map, string epc,string name)
     {
-        string objName = breakobject + "(Clone)";
-        GameObject obj = GameObject.Find(objName);
-        //Destroy(obj, .5f);
-        Destroy(obj);
+        //UnityEngine.Debug.Log("EPC:" + epc +";");
+        int epcN = int.Parse(epc);
+        string a = map.ToString();
+        string b = epcN.ToString();
+        string objName1 = a + b + "(Clone)";
+        string objName2 = name + "(Clone)";
+        UnityEngine.Debug.Log("Break:" +objName1+ ";");
+        UnityEngine.Debug.Log("Break:" + objName2 + ";");
+        GameObject obj1 = GameObject.Find(objName1);
+        GameObject obj2 = GameObject.Find(objName2);
+        Destroy(obj1);
+        Destroy(obj2);
     }
 
 }

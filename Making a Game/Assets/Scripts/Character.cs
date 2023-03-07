@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
@@ -33,13 +35,13 @@ public class Character : MonoBehaviour
         MapNumber = 0;
 
         //确定地图上正确的路线
-        Map = new int[5] { 1, 1, 1, 1, 1 };
+        Map = new int[17] { 3, 5, 7, 5, 7, 3, 3, 8, 6, 6, 6, 7, 1, 1, 1, 2, 0 };
 
         //绑定character的rigidbody2D
         rb = GetComponent<Rigidbody2D>();
 
         frameNumber = 0;
-        frameSum = 500;
+        frameSum = 5000;//决定速度
     }
 
     // Update is called once per frame
@@ -57,11 +59,13 @@ public class Character : MonoBehaviour
 
             if (direction == Map[MapNumber])
             {
+                //UnityEngine.Debug.Log("MovingNext" );//测试用
                 MovingNext(direction);//向下一个地图走
                 frameNumber++;
             }
             else
             {
+                //UnityEngine.Debug.Log("MovingStill");//测试用
                 MovingStill(direction,frameNumber);//仍停留在本地图
                 frameNumber++;
             }
@@ -71,6 +75,47 @@ public class Character : MonoBehaviour
                 if(direction == Map[MapNumber])
                 {
                     MapNumber += 1;
+                    if(MapNumber == 16)
+                    {
+                        MapNumber = 0;
+                    }
+
+                    /*
+                    //销毁对应物品
+                    string objName = "Item";
+                    string s1 = MapNumber.ToString();
+                    objName = objName + s1;
+                    GameObject obj = GameObject.Find(objName);
+                    Destroy(obj);
+                    */
+
+                    //随机一下，是否获得物品
+                    if((((MapNumber == 3 || MapNumber == 6) || MapNumber == 9) || MapNumber == 12) || MapNumber == 14)
+                    {
+                        int random;
+                        float origin = GameObject.Find("Number").GetComponent<TextController>().number;
+                        random = UnityEngine.Random.Range(1,101);
+                        //考虑把该随机可视化（加个预制体？)
+                        UnityEngine.Debug.Log("Random:" + random);
+                        if (random <= 20)
+                        {
+                            //随机成功
+                            if(origin <= 15)
+                            {
+                                //结束，成功
+
+                            }
+                            else
+                            {
+                                GameObject.Find("Number").GetComponent<TextController>().number -= 15;
+                            }
+                            
+                        }
+
+                    }
+
+
+
                 }
                 GameObject.Find("AssetLoader").GetComponent<BundleWebLoader>().Moving = false;
                 frameNumber = 0;
@@ -85,78 +130,258 @@ public class Character : MonoBehaviour
 
     void MovingNext(int d)
     {
+        float SumX = 38.4f;
+        float SumY = 21.6f;
         if(d == 1)
            {
             //UnityEngine.Debug.Log("Moving!!!!!" );
-            float X = -10f;//移动总X
-            float Y = 5f;//移动总Y
+            float X = -SumX;//移动总X
+            float Y = SumY;//移动总Y
             float deltaX = X/frameSum;
             float deltaY = Y/frameSum;
             transform.position += new Vector3(deltaX, deltaY , 0);
             }
-        /*
-            if (d == 1)
-            {
-                horizontalMove = -38.4f;
-                verticalMove = 21.6f;
-            //到达后停下
-            }
-            if (d == 2)
-            {
-                horizontalMove = 0;
-                verticalMove = 21.6f;
-            }
-            if (d == 3)
-            {
-                horizontalMove = 38.4f;
-                verticalMove = 21.6f;
-            }
-            if (d == 4)
-            {
-                horizontalMove = -38.4f;
-                verticalMove = 0;
-            }
-            if (d == 5)
-            {
-                horizontalMove = 38.4f;
-                verticalMove = 0;
-            }
-            if (d == 6)
-            {
-                horizontalMove = -38.4f;
-                verticalMove = -21.6f;
-            }
-            if (d == 7)
-            {
-                horizontalMove = 0;
-                verticalMove = -21.6f;
-            }
-            if (d == 8)
-            {
-                horizontalMove = 38.4f;
-                verticalMove = -21.6f;
-            }
-
-        
-            rb.velocity = new Vector2(horizontalMove * speed, verticalMove * speed);
-            */
-        
-        
-        
-
-        //另一种移动的写法
-       /* if (d == 1)
+        if (d == 2)
         {
-            targetposition = new Vector3(rb.transform.position.x - 67.2f, rb.transform.position.y+37.8f,0);
-            rb.transform.position = Vector3.MoveTowards(rb.transform.position, targetposition, speed);
-            UnityEngine.Debug.Log("move to 1.");
-        }*/
+            float X = 0;//移动总X
+            float Y = SumY;//移动总Y
+            float deltaX = X / frameSum;
+            float deltaY = Y / frameSum;
+            transform.position += new Vector3(deltaX, deltaY, 0);
+        }
+        if (d == 3)
+        {
+            float X = SumX;//移动总X
+            float Y = SumY;//移动总Y
+            float deltaX = X / frameSum;
+            float deltaY = Y / frameSum;
+            transform.position += new Vector3(deltaX, deltaY, 0);
+        }
+        if (d == 4)
+        {
+            float X = -SumX;//移动总X
+            float Y = 0;//移动总Y
+            float deltaX = X / frameSum;
+            float deltaY = Y / frameSum;
+            transform.position += new Vector3(deltaX, deltaY, 0);
+        }
+        if (d == 5)
+        {
+            float X = SumX;//移动总X
+            float Y =0;//移动总Y
+            float deltaX = X / frameSum;
+            float deltaY = Y / frameSum;
+            transform.position += new Vector3(deltaX, deltaY, 0);
+        }
+        if (d == 6)
+        {
+            float X = -SumX;//移动总X
+            float Y = -SumY;//移动总Y
+            float deltaX = X / frameSum;
+            float deltaY = Y / frameSum;
+            transform.position += new Vector3(deltaX, deltaY, 0);
+        }
+        if (d == 7)
+        {
+            float X = 0;//移动总X
+            float Y = -SumY;//移动总Y
+            float deltaX = X / frameSum;
+            float deltaY = Y / frameSum;
+            transform.position += new Vector3(deltaX, deltaY, 0);
+        }
+        if (d == 8)
+        {
+            float X = SumX;//移动总X
+            float Y = -SumY;//移动总Y
+            float deltaX = X / frameSum;
+            float deltaY = Y / frameSum;
+            transform.position += new Vector3(deltaX, deltaY, 0);
+        }
+
     }
 
 
     //d指方向，f指目前的帧数
     void MovingStill(int d, int f)
     {
-
+        float SumX = 38.4f;
+        float SumY = 21.6f;
+        //暴力啊好
+        if (d == 1)
+        {
+            float X = -SumX;//移动总X
+            float Y = SumY;//移动总Y
+            float deltaX1 = X / frameSum;//瞬移前移动x
+            float deltaY1 = Y / frameSum;//瞬移前移动y
+            float deltaX2 = X / frameSum;//瞬移后移动x
+            float deltaY2 = Y / frameSum;//瞬移后移动y
+            //其实是x，y和framesum在这里边都除以二了于是写出来还是这样。&虽然长得一样但是为了自己能想清楚所以分开写了。
+            if (f < (frameSum / 2))
+            {
+                transform.position += new Vector3(deltaX1, deltaY1, 0);
+            }
+            else if (f == (frameSum / 2))
+            {
+                transform.position += new Vector3(-X, -Y, 0);
+            }
+            else if (f > (frameSum / 2))
+            {
+                transform.position += new Vector3(deltaX2, deltaY2, 0);
+            }
+        }
+        if (d == 2)
+        {
+            float X = 0;//移动总X
+            float Y = SumY;//移动总Y
+            float deltaX1 = X / frameSum;//瞬移前移动x
+            float deltaY1 = Y / frameSum;//瞬移前移动y
+            float deltaX2 = X / frameSum;//瞬移后移动x
+            float deltaY2 = Y / frameSum;//瞬移后移动y
+            //其实是x，y和framesum在这里边都除以二了于是写出来还是这样。&虽然长得一样但是为了自己能想清楚所以分开写了。
+            if (f < frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX1, deltaY1, 0);
+            }
+            else if (f == frameSum / 2)
+            {
+                transform.position += new Vector3(-X, -Y, 0);
+            }
+            else if(f>frameSum/2)
+            {
+                transform.position += new Vector3(deltaX2, deltaY2, 0);
+            }
+        }
+        if (d == 3)
+        {
+            float X = SumX;//移动总X
+            float Y = SumY;//移动总Y
+            float deltaX1 = X / frameSum;//瞬移前移动x
+            float deltaY1 = Y / frameSum;//瞬移前移动y
+            float deltaX2 = X / frameSum;//瞬移后移动x
+            float deltaY2 = Y / frameSum;//瞬移后移动y
+            //其实是x，y和framesum在这里边都除以二了于是写出来还是这样。&虽然长得一样但是为了自己能想清楚所以分开写了。
+            if (f < frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX1, deltaY1, 0);
+            }
+            else if (f == frameSum / 2)
+            {
+                transform.position += new Vector3(-X, -Y, 0);
+            }
+            else if (f > frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX2, deltaY2, 0);
+            }
+        }
+        if (d == 4)
+        {
+            float X = -SumX;//移动总X
+            float Y = 0;//移动总Y
+            float deltaX1 = X / frameSum;//瞬移前移动x
+            float deltaY1 = Y / frameSum;//瞬移前移动y
+            float deltaX2 = X / frameSum;//瞬移后移动x
+            float deltaY2 = Y / frameSum;//瞬移后移动y
+            //其实是x，y和framesum在这里边都除以二了于是写出来还是这样。&虽然长得一样但是为了自己能想清楚所以分开写了。
+            if (f < frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX1, deltaY1, 0);
+            }
+            else if (f == frameSum / 2)
+            {
+                transform.position += new Vector3(-X, -Y, 0);
+            }
+            else if (f > frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX2, deltaY2, 0);
+            }
+        }
+        if (d == 5)
+        {
+            float X = SumX;//移动总X
+            float Y = 0;//移动总Y
+            float deltaX1 = X / frameSum;//瞬移前移动x
+            float deltaY1 = Y / frameSum;//瞬移前移动y
+            float deltaX2 = X / frameSum;//瞬移后移动x
+            float deltaY2 = Y / frameSum;//瞬移后移动y
+            //其实是x，y和framesum在这里边都除以二了于是写出来还是这样。&虽然长得一样但是为了自己能想清楚所以分开写了。
+            if (f < frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX1, deltaY1, 0);
+            }
+            else if (f == frameSum / 2)
+            {
+                transform.position += new Vector3(-X, -Y, 0);
+            }
+            else if (f > frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX2, deltaY2, 0);
+            }
+        }
+        if (d == 6)
+        {
+            float X = -SumX;//移动总X
+            float Y = -SumY;//移动总Y
+            float deltaX1 = X / frameSum;//瞬移前移动x
+            float deltaY1 = Y / frameSum;//瞬移前移动y
+            float deltaX2 = X / frameSum;//瞬移后移动x
+            float deltaY2 = Y / frameSum;//瞬移后移动y
+            //其实是x，y和framesum在这里边都除以二了于是写出来还是这样。&虽然长得一样但是为了自己能想清楚所以分开写了。
+            if (f < frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX1, deltaY1, 0);
+            }
+            else if (f == frameSum / 2)
+            {
+                transform.position += new Vector3(-X, -Y, 0);
+            }
+            else if (f > frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX2, deltaY2, 0);
+            }
+        }
+        if (d == 7)
+        {
+            float X = 0;//移动总X
+            float Y = -SumY;//移动总Y
+            float deltaX1 = X / frameSum;//瞬移前移动x
+            float deltaY1 = Y / frameSum;//瞬移前移动y
+            float deltaX2 = X / frameSum;//瞬移后移动x
+            float deltaY2 = Y / frameSum;//瞬移后移动y
+            //其实是x，y和framesum在这里边都除以二了于是写出来还是这样。&虽然长得一样但是为了自己能想清楚所以分开写了。
+            if (f < frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX1, deltaY1, 0);
+            }
+            else if (f == frameSum / 2)
+            {
+                transform.position += new Vector3(-X, -Y, 0);
+            }
+            else if (f > frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX2, deltaY2, 0);
+            }
+        }
+        if (d == 8)
+        {
+            float X = SumX;//移动总X
+            float Y = -SumY;//移动总Y
+            float deltaX1 = X / frameSum;//瞬移前移动x
+            float deltaY1 = Y / frameSum;//瞬移前移动y
+            float deltaX2 = X / frameSum;//瞬移后移动x
+            float deltaY2 = Y / frameSum;//瞬移后移动y
+            //其实是x，y和framesum在这里边都除以二了于是写出来还是这样。&虽然长得一样但是为了自己能想清楚所以分开写了。
+            if (f < frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX1, deltaY1, 0);
+            }
+            else if (f == frameSum / 2)
+            {
+                transform.position += new Vector3(-X, -Y, 0);
+            }
+            else if (f > frameSum / 2)
+            {
+                transform.position += new Vector3(deltaX2, deltaY2, 0);
+            }
+        }
     }
 }
