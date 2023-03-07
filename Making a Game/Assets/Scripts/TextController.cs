@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 using static System.Net.Mime.MediaTypeNames;
 
 public class TextController : MonoBehaviour
 {
     public SpriteRenderer spriteRenderer;
     public TextMeshProUGUI Text;
+    
     // Start is called before the first frame update
     public float number;
     public int count;
@@ -30,6 +32,9 @@ public class TextController : MonoBehaviour
             {
                 number = 100;
                 //½áÊø£¬Ê§°Ü
+                //AudioManager.audioManager.EndAudio();
+                //AudioManager.audioManager.BackgroundStop();
+                SceneManager.LoadScene(2);
             }
             number += 0.01f;
             float colorNumber = (100 - number)/100;

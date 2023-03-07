@@ -96,11 +96,11 @@ public class TextEditing : MonoBehaviour
             //非移动过程中显示的文字
             if(MapNumber == 0)
             {
-                Text.text = "";
+                Text.text = "“我有一个梦想……”";
             }
             else if (MapNumber == 1)
             {
-                Text.text = "";
+                Text.text = "“可是后来梦想破灭了……”";
             }
             else if (MapNumber == 2)
             {

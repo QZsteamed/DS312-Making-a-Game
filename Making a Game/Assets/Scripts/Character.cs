@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class Character : MonoBehaviour
@@ -53,6 +54,10 @@ public class Character : MonoBehaviour
         //移动代码
         if (Moving)
         {
+            if(frameNumber == 0)
+            {
+                AudioManager.audioManager.WheelchairAudio();
+            }
             Direction = GameObject.Find("AssetLoader").GetComponent<BundleWebLoader>().Direction; //获取移动方位
             int direction = int.Parse(Direction); //String转换成数字
             //UnityEngine.Debug.Log("dddddd"+direction);//测试用
@@ -103,7 +108,7 @@ public class Character : MonoBehaviour
                             if(origin <= 15)
                             {
                                 //结束，成功
-
+                                SceneManager.LoadScene(3);
                             }
                             else
                             {
@@ -118,6 +123,7 @@ public class Character : MonoBehaviour
 
                 }
                 GameObject.Find("AssetLoader").GetComponent<BundleWebLoader>().Moving = false;
+                AudioManager.audioManager.WheelchairStop();
                 frameNumber = 0;
             }
 
@@ -130,6 +136,7 @@ public class Character : MonoBehaviour
 
     void MovingNext(int d)
     {
+
         float SumX = 38.4f;
         float SumY = 21.6f;
         if(d == 1)

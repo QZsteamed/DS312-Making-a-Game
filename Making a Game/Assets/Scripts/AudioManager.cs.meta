@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 93dbb95d28e75c24bb7f01cdb8e1fca1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - audioSource: {instanceID: 0}
+  - background: {fileID: 8300000, guid: 31da0f7dac4bf194ea63759e1ec90fc0, type: 3}
+  - wheelchair: {fileID: 8300000, guid: 740378b83673fa740bf5ab9513e28404, type: 3}
+  - endAudio: {fileID: 8300000, guid: 90f620492dd2c314598dff9513c1c6c9, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
